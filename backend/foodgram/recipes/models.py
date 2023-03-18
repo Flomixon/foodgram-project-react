@@ -124,3 +124,53 @@ class RecipeTag(models.Model):
                 name='unique_recipe_tag'
             )
         )
+
+
+class Follow(models.Model):
+    '''Модель подписок'''
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='follower'
+    )
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='following'
+    )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'author'],
+                name='unique_follower'
+            )
+        ]
+
+
+class Favorite(models.Model):
+    '''Модель избранных рецептов'''
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='favorites'
+    )
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        related_name='favorite_users'
+    )
+
+
+class SgoppingCart(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='user_shopps',
+    )
+    ingredients = models.ForeignKey(
+        Ingredients,
+        on_delete=models.CASCADE,
+        related_name='ingred_lists'
+    )
+    quantity = models.PositiveSmallIntegerField()
