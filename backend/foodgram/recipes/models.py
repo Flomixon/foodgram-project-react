@@ -101,7 +101,7 @@ class RecipeIngredients(models.Model):
             models.UniqueConstraint(
                 fields=('recipe', 'ingredients'),
                 name='unique_recipe_ingredients'
-            )
+            ),
         )
 
 
@@ -122,7 +122,7 @@ class RecipeTag(models.Model):
             models.UniqueConstraint(
                 fields=('recipe', 'tag'),
                 name='unique_recipe_tag'
-            )
+            ),
         )
 
 
@@ -140,12 +140,12 @@ class Follow(models.Model):
     )
 
     class Meta:
-        constraints = [
+        constraints = (
             models.UniqueConstraint(
                 fields=['user', 'author'],
                 name='unique_follower'
-            )
-        ]
+            ),
+        )
 
 
 class Favorite(models.Model):
