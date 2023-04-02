@@ -34,9 +34,8 @@ class RecipeAdmin(admin.ModelAdmin):
 
     def added_in_favorite(self, obj):
         return obj.favorite_users.count()
-    
+
     added_in_favorite.short_description = 'Добавлено в избранное'
-    
 
 
 @admin.register(User)

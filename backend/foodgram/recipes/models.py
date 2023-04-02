@@ -75,7 +75,7 @@ class Recipe(models.Model):
     image = models.ImageField(
         upload_to='recipe/images/',
         default=None
-        )
+    )
     text = models.TextField(
         'Описание',
     )
@@ -146,7 +146,7 @@ class RecipeTag(models.Model):
     class Meta:
         verbose_name = 'Рецепт-Тег'
         verbose_name_plural = 'Рецепт-Тег'
-        constraints=(
+        constraints = (
             models.UniqueConstraint(
                 fields=('recipe', 'tag'),
                 name='unique_recipe_tag'
@@ -194,6 +194,7 @@ class Favorite(models.Model):
         related_name='favorite_users',
         verbose_name='Рецепт'
     )
+
     class Meta:
         verbose_name = 'Избранное'
         verbose_name_plural = 'Избранное'
@@ -218,6 +219,7 @@ class ShoppingCart(models.Model):
         related_name='shop_cart_recipe',
         verbose_name='Рецепт'
     )
+
     class Meta:
         verbose_name = 'Список покупок'
         verbose_name_plural = 'Список покупок'
