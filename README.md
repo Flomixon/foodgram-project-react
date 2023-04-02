@@ -6,4 +6,4 @@
 http://84.201.166.6/api/docs/
 ```
 
-![example workflow](https://github.com/Flomixon/foodgram-project-react/workflows/foodgram_workflow.yml/badge.svg)
+![example workflow](https://github.com/Flomixon/foodgram-project-react/actions/workflows/foodgram_workflow.yml/badge.svg)
