@@ -51,7 +51,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 author = get_object_or_404(User, id=params['author'])
                 queryset = author.recipes.all()
         if 'tags' in params:
-            return queryset.filter(tags__slug__in=params.getlist('tags'))
+            return queryset.filter(tags__slug__in=params.getlist('tags')).distinct()
         return queryset
 
 
