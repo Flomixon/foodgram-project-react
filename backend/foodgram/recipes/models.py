@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-from django.core.validators import RegexValidator
+from django.core.validators import RegexValidator, MinValueValidator
 
 
 User = get_user_model()
@@ -89,7 +89,11 @@ class Recipe(models.Model):
         through='RecipeTag',
         verbose_name='Тег'
     )
-    cooking_time = models.PositiveSmallIntegerField()
+    cooking_time = models.PositiveSmallIntegerField(
+        validators=(
+            MinValueValidator(1),
+        )
+    )
 
     def __str__(self):
         return self.name
@@ -114,7 +118,7 @@ class RecipeIngredients(models.Model):
         related_name='ingredients',
         verbose_name='Ингредиент'
     )
-    amount = models.PositiveSmallIntegerField(
+    amount = models.PositiveIntegerField(
         'Колличество'
     )
 
@@ -150,32 +154,6 @@ class RecipeTag(models.Model):
             models.UniqueConstraint(
                 fields=('recipe', 'tag'),
                 name='unique_recipe_tag'
-            ),
-        )
-
-
-class Follow(models.Model):
-    '''Модель подписок'''
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='follower',
-        verbose_name='Пользователь'
-    )
-    author = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='following',
-        verbose_name='Подписка'
-    )
-
-    class Meta:
-        verbose_name = 'Подписчик'
-        verbose_name_plural = 'Подписчики'
-        constraints = (
-            models.UniqueConstraint(
-                fields=['user', 'author'],
-                name='unique_follower'
             ),
         )
 

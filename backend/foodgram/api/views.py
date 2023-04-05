@@ -1,7 +1,8 @@
 from rest_framework import filters, viewsets, status
-from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.generics import CreateAPIView, DestroyAPIView
+from django.core.exceptions import ValidationError
 
 from django.shortcuts import get_object_or_404
 from django.db.utils import IntegrityError
@@ -16,8 +17,8 @@ from api.serializers import (
     TagSerializer
 )
 
+from users.models import Follow
 from recipes.models import (
-    Follow,
     Favorite,
     Ingredients,
     Recipe,
@@ -81,11 +82,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
         serializer.save(author=self.request.user)
 
 
-@api_view(['POST', 'DELETE'])
-@permission_classes([IsAuthenticated])
-def shopping_cart(request, recipe_id):
-    user = request.user
-    if request.method == 'POST':
+class ShoppingCartViewSet(CreateAPIView, DestroyAPIView):
+    permission_classes = (IsAuthenticated,)
+
+    def create(self, request, recipe_id):
+        user = request.user
         try:
             recipe = get_object_or_404(Recipe, id=recipe_id)
             ShoppingCart.objects.create(user=user, recipe=recipe)
@@ -98,20 +99,21 @@ def shopping_cart(request, recipe_id):
             )
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST)
-    elif request.method == 'DELETE':
+
+    def destroy(self, request, recipe_id):
+        user = request.user
         recipe = get_object_or_404(ShoppingCart, user=user, recipe=recipe_id)
         recipe.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-    return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['POST', 'DELETE'])
-def favorite_recipe(request, recipe_id):
-    user = request.user
-    if request.method == 'POST':
+class FavoriteRecipeViewSet(CreateAPIView, DestroyAPIView):
+    permission_classes = (IsAuthenticated,)
+
+    def create(self, request, recipe_id):
         try:
             recipe = get_object_or_404(Recipe, id=recipe_id)
-            Favorite.objects.create(user=user, recipe=recipe)
+            Favorite.objects.create(user=request.user, recipe=recipe)
             res = ShoppingCartSerializer(recipe)
             return Response(res.data, status=status.HTTP_201_CREATED)
         except IntegrityError:
@@ -121,11 +123,13 @@ def favorite_recipe(request, recipe_id):
             )
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST)
-    elif request.method == 'DELETE':
-        recipe = get_object_or_404(Favorite, user=user, recipe=recipe_id)
+
+    def destroy(self, request, recipe_id):
+        recipe = get_object_or_404(
+            Favorite, user=request.user, recipe=recipe_id
+        )
         recipe.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-    return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class FollowViewSet(viewsets.ModelViewSet):
@@ -140,16 +144,12 @@ class FollowViewSet(viewsets.ModelViewSet):
         )
 
 
-@api_view(['POST', 'DELETE'])
-def subscribe(request, user_id):
-    user = request.user
-    sub = get_object_or_404(User, id=user_id)
-    if request.method == 'POST':
-        if user.id == user_id:
-            return Response(
-                data={"errors": 'Нельзя подписываться на самого себя!'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+class SubscribeViewSet(CreateAPIView, DestroyAPIView):
+    permission_classes = (IsAuthenticated,)
+
+    def create(self, request, user_id):
+        user = request.user
+        sub = get_object_or_404(User, id=user_id)
         try:
             Follow.objects.create(user=user, author=sub)
             res = FollowerSerializer(sub, context={'request': request})
@@ -159,9 +159,15 @@ def subscribe(request, user_id):
                 data={"errors": 'Вы уже подписаны на автора!'},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        except Exception:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-    elif request.method == 'DELETE':
+        except ValidationError as error:
+            return Response(
+                data={"errors": error},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+    def destroy(self, request, user_id):
+        user = request.user
+        sub = get_object_or_404(User, id=user_id)
         try:
             remove = user.follower.get(author=sub)
             remove.delete()
@@ -173,8 +179,6 @@ def subscribe(request, user_id):
             )
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST)
-    else:
-        return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 def shopping_cart_txt(request):
