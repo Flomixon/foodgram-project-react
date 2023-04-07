@@ -14,7 +14,7 @@ class CustomUser(AbstractUser):
     last_name = models.CharField(_('last name'), max_length=150)
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
+    REQUIRED_FIELDS = ('username', 'first_name', 'last_name')
 
     def __str__(self):
         return self.username
@@ -48,7 +48,7 @@ class Follow(models.Model):
         verbose_name_plural = 'Подписчики'
         constraints = (
             models.UniqueConstraint(
-                fields=['user', 'author'],
+                fields=('user', 'author'),
                 name='unique_follower'
             ),
         )

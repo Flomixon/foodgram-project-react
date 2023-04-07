@@ -178,7 +178,7 @@ class Favorite(models.Model):
         verbose_name_plural = 'Избранное'
         constraints = (
             models.UniqueConstraint(
-                fields=['user', 'recipe'],
+                fields=('user', 'recipe'),
                 name='unique_favorite'
             ),
         )
@@ -203,7 +203,7 @@ class ShoppingCart(models.Model):
         verbose_name_plural = 'Список покупок'
         constraints = (
             models.UniqueConstraint(
-                fields=['user', 'recipe'],
+                fields=('user', 'recipe'),
                 name='unique_shopp_cart'
             ),
         )
