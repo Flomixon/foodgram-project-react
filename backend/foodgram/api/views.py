@@ -38,7 +38,7 @@ class IngredientsViewSet(viewsets.ModelViewSet):
     queryset = Ingredients.objects.all()
     serializer_class = IngredientsSerializer
     pagination_class = None
-    
+
     def get_queryset(self):
         queryset = super().get_queryset()
         params = self.request.query_params
