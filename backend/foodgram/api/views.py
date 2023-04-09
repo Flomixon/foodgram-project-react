@@ -3,6 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.generics import CreateAPIView, DestroyAPIView
 from django.core.exceptions import ValidationError
+from django_filters.rest_framework import DjangoFilterBackend
 
 from django.shortcuts import get_object_or_404
 from django.db.utils import IntegrityError
@@ -37,8 +38,8 @@ class TagViewSet(viewsets.ModelViewSet):
 class IngredientsViewSet(viewsets.ModelViewSet):
     queryset = Ingredients.objects.all()
     serializer_class = IngredientsSerializer
-    filter_backends = (filters.SearchFilter,)
-    search_fields = ('^name',)
+    filter_backends = (DjangoFilterBackend,)
+    filterset_fields = ('name',)
     pagination_class = None
 
 
