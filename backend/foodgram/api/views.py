@@ -44,6 +44,8 @@ class IngredientsViewSet(viewsets.ModelViewSet):
         params = self.request.query_params
         if 'name' in params:
             queryset = queryset.filter(
+                name__startswith=params['name']
+            ) | queryset.filter(
                 name__contains=params['name']
             )
         return queryset
