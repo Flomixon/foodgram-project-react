@@ -142,6 +142,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         recipe.save()
         return recipe
 
+    @transaction.atomic
     def update(self, instance, validated_data):
         instance.text = validated_data.get('text', instance.text)
         instance.name = validated_data.get('name', instance.name)
@@ -149,20 +150,13 @@ class RecipeSerializer(serializers.ModelSerializer):
             'cooking_time', instance.cooking_time
         )
         instance.tags.set(validated_data.get('tags', instance.tags))
+        RecipeIngredients.objects.filter(recipe=instance).delete()
         for ingr in validated_data.get('ingredients', instance.ingredients):
-            recingr = RecipeIngredients.objects.filter(
+            RecipeIngredients.objects.create(
                 recipe=instance,
-                ingredients=ingr.get('ingredients')
+                ingredients=ingr.get('ingredients'),
+                amount=ingr.get('amount')
             )
-            if recingr:
-                recingr[0].amount = ingr.get('amount')
-                recingr[0].save()
-            else:
-                RecipeIngredients.objects.create(
-                    recipe=instance,
-                    ingredients=ingr.get('ingredients'),
-                    amount=ingr.get('amount')
-                )
         instance.save()
         return instance
 
