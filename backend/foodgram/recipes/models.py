@@ -30,12 +30,12 @@ class Tag(models.Model):
         unique=True
     )
 
-    def __str__(self):
-        return self.name
-
     class Meta:
         verbose_name = 'Тег'
         verbose_name_plural = 'Теги'
+
+    def __str__(self):
+        return self.name
 
 
 class Ingredients(models.Model):
@@ -50,12 +50,12 @@ class Ingredients(models.Model):
         max_length=200
     )
 
-    def __str__(self):
-        return self.name
-
     class Meta:
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
+
+    def __str__(self):
+        return self.name
 
 
 class Recipe(models.Model):
@@ -95,13 +95,13 @@ class Recipe(models.Model):
         )
     )
 
-    def __str__(self):
-        return self.name
-
     class Meta:
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
         ordering = ('-id',)
+
+    def __str__(self):
+        return self.name
 
 
 class RecipeIngredients(models.Model):
@@ -132,6 +132,9 @@ class RecipeIngredients(models.Model):
             ),
         )
 
+    def __str__(self):
+        return f'Ингредиент {self.ingredients} в рецепте {self.recipe}'
+
 
 class RecipeTag(models.Model):
     recipe = models.ForeignKey(
@@ -156,6 +159,9 @@ class RecipeTag(models.Model):
                 name='unique_recipe_tag'
             ),
         )
+
+    def __str__(self):
+        return f'Тэг {self.tag} в рецепте {self.recipe}'
 
 
 class Favorite(models.Model):
@@ -183,6 +189,9 @@ class Favorite(models.Model):
             ),
         )
 
+    def __str__(self):
+        return f'Избранный рецепт {self.recipe} для профиля {self.user}'
+
 
 class ShoppingCart(models.Model):
     user = models.ForeignKey(
@@ -207,3 +216,6 @@ class ShoppingCart(models.Model):
                 name='unique_shopp_cart'
             ),
         )
+
+    def __str__(self):
+        return f'Рецепт {self.recipe} в корзине пользователя {self.user}'

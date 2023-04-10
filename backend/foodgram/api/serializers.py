@@ -142,6 +142,30 @@ class RecipeSerializer(serializers.ModelSerializer):
         recipe.save()
         return recipe
 
+    def update(self, instance, validated_data):
+        instance.text = validated_data.get('text', instance.text)
+        instance.name = validated_data.get('name', instance.name)
+        instance.cooking_time = validated_data.get(
+            'cooking_time', instance.cooking_time
+        )
+        instance.tags.set(validated_data.get('tags', instance.tags))
+        for ingr in validated_data.get('ingredients', instance.ingredients):
+            recingr = RecipeIngredients.objects.filter(
+                recipe=instance,
+                ingredients=ingr.get('ingredients')
+            )
+            if recingr:
+                recingr[0].amount = ingr.get('amount')
+                recingr[0].save()
+            else:
+                RecipeIngredients.objects.create(
+                    recipe=instance,
+                    ingredients=ingr.get('ingredients'),
+                    amount=ingr.get('amount')
+                )
+        instance.save()
+        return instance
+
     def to_representation(self, instance):
         res = RecipeViewSerializer(
             instance, context={'request': self.context.get('request')}

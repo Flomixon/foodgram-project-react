@@ -27,11 +27,20 @@ class IngredientsAdmin(admin.ModelAdmin):
     search_fields = ('name',)
 
 
+class TagsInline(admin.TabularInline):
+    model = RecipeTag
+
+
+class IngredientsInline(admin.TabularInline):
+    model = RecipeIngredients
+
+
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
     list_display = ('name', 'author', 'added_in_favorite')
     list_filter = ('author', 'name', 'tags')
     search_fields = ('author', 'name')
+    inlines = (TagsInline, IngredientsInline)
 
     def added_in_favorite(self, obj):
         return obj.favorite_users.count()
