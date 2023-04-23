@@ -22,13 +22,13 @@ https://62.113.108.216/api/docs/
 
 ## :hammer_and_wrench: Как запустить проект:
  Скачайте на локальную машину или сервер данный репощиторий. В директории infra создайте файл .env и добавьте в него:
-DB_ENGINE=django.db.backends.postgresql
-DB_NAME=postgres
-POSTGRES_USER= #название БД
-POSTGRES_PASSWORD= #пароль к БД
-DB_HOST=db
-DB_PORT=5432
-SECRET_KEY= #секретный ключ конфигурации Django
+DB_ENGINE=django.db.backends.postgresql  
+DB_NAME=postgres  
+POSTGRES_USER= #название БД  
+POSTGRES_PASSWORD= #пароль к БД  
+DB_HOST=db  
+DB_PORT=5432  
+SECRET_KEY= #секретный ключ конфигурации Django  
 Запустите сборку докер контейнеров командой
 
 ```
