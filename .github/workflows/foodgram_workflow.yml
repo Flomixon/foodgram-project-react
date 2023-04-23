@@ -54,6 +54,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
           script: |
+            cd test_dev/foodgram-project-react/infra
             sudo docker-compose stop
             sudo docker-compose rm web
             sudo docker image rmi flomixon/foodgram:latest
